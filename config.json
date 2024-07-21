@@ -1,11 +1,11 @@
 {
   "host": "0.0.0.0",
-  "port": 4000,
+  "port": 50040,
   "https": false,
   "webSocketHost": "0.0.0.0",
-  "webSocketPort": 50040,
+  "webSocketPort": 50041,
   "webSocketHttps": false,
-  "webSocketDevAddress": "127.0.0.1:50040",
+  "webSocketDevAddress": "127.0.0.1:50041",
   "useWebSocketDevAddress": false,
   "webSocketRegions": {
     "na": "1v1.donetsk.live"
