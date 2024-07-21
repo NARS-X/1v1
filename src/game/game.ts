@@ -244,7 +244,7 @@ export class Game {
             const tickStart = Date.now();
 
             // Update physics
-            this.world.step(12.5);
+            this.world.step(7.2);
 
             // Create an alive count packet
             if (this.aliveCountDirty) this.aliveCounts = new AliveCountsPacket(this);

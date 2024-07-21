@@ -219,7 +219,7 @@ class Game {
         setTimeout(() => {
             const tickStart = Date.now();
             // Update physics
-            this.world.step(12.5);
+            this.world.step(7.2);
             // Create an alive count packet
             if (this.aliveCountDirty)
                 this.aliveCounts = new aliveCountsPacket_1.AliveCountsPacket(this);
