@@ -10,19 +10,19 @@ import { AliveCountsPacket } from "../packets/sending/aliveCountsPacket";
 import { UpdatePacket } from "../packets/sending/updatePacket";
 import { JoinedPacket } from "../packets/sending/joinedPacket";
 import { MapPacket } from "../packets/sending/mapPacket";
-import { type KillPacket } from "../packets/sending/killPacket"; 
-import { type GameObject } from "./gameObject"; 
+import { type KillPacket } from "../packets/sending/killPacket";
+import { type GameObject } from "./gameObject";
 import { Fixture, Settings, Vec2, World } from "planck";
 import { RoleAnnouncementPacket } from "../packets/sending/roleAnnouncementPacket";
 import { Loot } from "./objects/loot";
 import { Bullet } from "./bullet";
 import { Explosion } from "./explosion";
 import { type Stair } from "./stair";
-import { Building } from "./objects/building";  
-import { type Obstacle } from "./objects/obstacle";   
+import { Building } from "./objects/building";
+import { type Obstacle } from "./objects/obstacle";
 import { type Projectile } from "./objects/projectile";
 
-export class Game {  
+export class Game {
     id: string; // The game ID. 16 hex characters, same as MD5
 
     map: GameMap;
@@ -83,7 +83,7 @@ export class Game {
         initialDuration: 0,
         countdownStart: 0,
         duration: 0,
-        posOld: Vec2(0,0),
+        posOld: Vec2(0, 0),
         posNew: Vec2(0, 0),
         radOld: 0,
         radNew: 0,
@@ -98,8 +98,8 @@ export class Game {
 
     over = false; // Whether this game is over. This is set to true to stop the tick loop.
     started = false; // Whether there are more than 2 players, meaning the game has started.
-    lobbyStartTime: number; //time when a second player joins and the timer countdown starts, measured with Date.now()
-    timePeriodToAllowJoin: number; //After this time period has elapsed, players can no longer join the game.
+    lobbyStartTime: number; // time when a second player joins and the timer countdown starts, measured with Date.now()
+    timePeriodToAllowJoin: number; // After this time period has elapsed, players can no longer join the game.
     /**
      * Whether new players should be able to join
      * can also be an indication for the "BattleRoyale" gamemode whether or not the game as officially started
@@ -108,13 +108,12 @@ export class Game {
     spawnWithGoodies = false; // In late game, players spawn with ammo and healing items
 
     constructor(gamemode: GameMode) {
-    
         this.gamemode = gamemode;
         this.id = crypto.createHash("md5").update(crypto.randomBytes(512)).digest("hex");
 
-        if (this.gamemode == GameMode.DeathMatch){
+        if (this.gamemode == GameMode.DeathMatch) {
             this.timePeriodToAllowJoin = convertToMilliseconds(5, 30);
-        }else if (this.gamemode == GameMode.BattleRoyale){
+        } else if (this.gamemode == GameMode.BattleRoyale) {
             this.timePeriodToAllowJoin = convertToMilliseconds(5, 30);
         }
 
@@ -159,21 +158,19 @@ export class Game {
             const thatObject = that.getUserData() as GameObject;
 
             // const display = thatObject.typeString == "" ? (thatObject as Player).name : thatObject.typeString;
-            
 
-            
             // Make sure the objects are on the same layer
             if (!sameLayer(thisObject.layer, thatObject.layer)) return false;
-            
+
             // if (thisObject instanceof Bullet){
-                //     const orientationsMatch = directionToOrientation(thisObject.direction) == thatObject.orientation || getOppositeOrientation(directionToOrientation(thisObject.direction)) == thatObject.orientation;
-                //     if (thisObject.isBullet && thatObject.isObstacle && thatObject.typeString?.includes("wall_ext") && !thatObject.typeString?.includes("thicker") && orientationsMatch && (thatObject as Obstacle).bunkerWall){
-                    //         // console.log(thatObject.typeString);
-                    //         console.log(directionToOrientation(thisObject.direction),thatObject.typeString, thatObject.orientation, (thatObject as Obstacle).bunkerWall);
-                    //         return false;
-                    //     }
-                    // }
-                    
+            //     const orientationsMatch = directionToOrientation(thisObject.direction) == thatObject.orientation || getOppositeOrientation(directionToOrientation(thisObject.direction)) == thatObject.orientation;
+            //     if (thisObject.isBullet && thatObject.isObstacle && thatObject.typeString?.includes("wall_ext") && !thatObject.typeString?.includes("thicker") && orientationsMatch && (thatObject as Obstacle).bunkerWall){
+            //         // console.log(thatObject.typeString);
+            //         console.log(directionToOrientation(thisObject.direction),thatObject.typeString, thatObject.orientation, (thatObject as Obstacle).bunkerWall);
+            //         return false;
+            //     }
+            // }
+
             // if (thisObject.isProjectile){
             //     let onStair = false;
             //     for (const stair of thisObject.game.stairs) {
@@ -189,14 +186,14 @@ export class Game {
             //             return false;
             //         }
             // }
-                                    
+
             // if (thisObject.isProjectile){
-                // console.log(thisObject.typeString + ":", directionToOrientation((thisObject as Projectile).direction), display + ":", thatObject.orientation);
+            // console.log(thisObject.typeString + ":", directionToOrientation((thisObject as Projectile).direction), display + ":", thatObject.orientation);
             // }
             // if (thatObject.typeString == "concrete_wall_ext_25"){
-                // const {height, bunkerWall, collidable, orientation} = (thatObject as Obstacle);
-                // console.log(thisObject.layer);
-                // console.log(height, bunkerWall, collidable, orientation);
+            // const {height, bunkerWall, collidable, orientation} = (thatObject as Obstacle);
+            // console.log(thisObject.layer);
+            // console.log(height, bunkerWall, collidable, orientation);
             // }
             // const bad = [
             //     "concrete_wall_ext_5",
@@ -231,13 +228,13 @@ export class Game {
 
         this.map = new GameMap(this, "main");
 
-        this.gas.posOld = new Vec2(this.map.width/2, this.map.height/2);
-        this.gas.posNew = new Vec2(this.map.width/2, this.map.height/2);
+        this.gas.posOld = new Vec2(this.map.width / 2, this.map.height / 2);
+        this.gas.posNew = new Vec2(this.map.width / 2, this.map.height / 2);
 
         this.gas.currentPos = new Vec2(this.map.width, this.map.height);
         this.gas.currentRad = this.map.width;
 
-        this.tick(30);
+        this.tick(1000 / 240);
     }
 
     tickTimes: number[] = [];
@@ -247,7 +244,7 @@ export class Game {
             const tickStart = Date.now();
 
             // Update physics
-            this.world.step(30);
+            this.world.step(12.5);
 
             // Create an alive count packet
             if (this.aliveCountDirty) this.aliveCounts = new AliveCountsPacket(this);
@@ -301,7 +298,6 @@ export class Game {
                 this.gasCircleDirty = true;
             }
 
-
             // Red zone damage
             this.ticksSinceLastGasDamage++;
             let gasDamage = false;
@@ -314,8 +310,8 @@ export class Game {
                 }
             }
 
-            //stop players from joining game after timePeriodToAllowJoin has elapsed
-            if (Date.now() - this.lobbyStartTime >= this.timePeriodToAllowJoin && this.allowJoin){
+            // stop players from joining game after timePeriodToAllowJoin has elapsed
+            if (Date.now() - this.lobbyStartTime >= this.timePeriodToAllowJoin && this.allowJoin) {
                 this.allowJoin = false;
             }
 
@@ -326,18 +322,18 @@ export class Game {
                 // console.log(p.zoom, p.distanceToMouse);
                 // Movement
                 if (p.isMobile) {
-                    if (this.gamemode == GameMode.DeathMatch){
+                    if (this.gamemode == GameMode.DeathMatch) {
                         p.setVelocity(p.touchMoveDir.x * p.speed, p.touchMoveDir.y * p.speed);
-                    }else if (this.gamemode == GameMode.BattleRoyale){
+                    } else if (this.gamemode == GameMode.BattleRoyale) {
                         p.setVelocity(p.touchMoveDir.x * p.speed, p.touchMoveDir.y * p.speed);
                         // if (this.allowJoin == false){
                         //     p.setVelocity(p.touchMoveDir.x * p.speed, p.touchMoveDir.y * p.speed);
                         // }
                     }
                 } else {
-                    if (this.gamemode == GameMode.DeathMatch){
+                    if (this.gamemode == GameMode.DeathMatch) {
                         p.setMovement();
-                    }else if (this.gamemode == GameMode.BattleRoyale){
+                    } else if (this.gamemode == GameMode.BattleRoyale) {
                         p.setMovement();
                         // //only allow players to move in battle royale after lobby closes (meaning game has started)
                         // if (this.allowJoin == false){
@@ -358,11 +354,10 @@ export class Game {
                     }
                 }
 
-                if (this.gamemode == GameMode.DeathMatch){
+                if (this.gamemode == GameMode.DeathMatch) {
                     p.updateHealthAndAdren();
-
-                }else if (this.gamemode == GameMode.BattleRoyale){
-                    if (this.allowJoin == false){
+                } else if (this.gamemode == GameMode.BattleRoyale) {
+                    if (!this.allowJoin) {
                         p.updateHealthAndAdren();
                     }
                 }
@@ -372,9 +367,9 @@ export class Game {
                     p.damage(this.gas.damage, undefined, undefined, DamageType.Gas);
                 }
 
-                //if player is being revived, cancel revive if either player move out of range
-                if (p.playerBeingRevived){
-                    if (distanceBetween(p.position, p.playerBeingRevived.position) > Constants.player.reviveRange){
+                // if player is being revived, cancel revive if either player move out of range
+                if (p.playerBeingRevived) {
+                    if (distanceBetween(p.position, p.playerBeingRevived.position) > Constants.player.reviveRange) {
                         p.cancelAction();
                     }
                 }
@@ -408,32 +403,30 @@ export class Game {
                         const weaponInfo = p.activeWeaponInfo;
                         // let difference = Math.min(p.inventory[weaponInfo.ammo], weaponInfo.maxClip - (p.activeWeapon as Gun).ammo);
                         let difference = Math.min(p.inventory[weaponInfo.ammo], (p.activeWeapon as Gun).customClip - (p.activeWeapon as Gun).ammo);
-                        //when mosin ammo reaches 0, do a full reload rather than incremental
-                        if (weaponInfo.name == "Mosin-Nagant" && difference == weaponInfo.maxReloadAlt){
+                        // when mosin ammo reaches 0, do a full reload rather than incremental
+                        if (weaponInfo.name == "Mosin-Nagant" && difference == weaponInfo.maxReloadAlt) {
                             difference = weaponInfo.maxReloadAlt;
-                        }else{
+                        } else {
                             if (difference > weaponInfo.maxReload) {
                                 difference = weaponInfo.maxReload;
-                                p.performActionAgain = true; 
+                                p.performActionAgain = true;
                             }
-                        } 
+                        }
 
                         (p.activeWeapon as Gun).ammo += difference;
                         p.inventory[weaponInfo.ammo] -= difference;
                         p.weaponsDirty = true;
                         p.inventoryDirty = true;
-                    }else if (p.actionType === Constants.Action.Revive){
-
+                    } else if (p.actionType === Constants.Action.Revive) {
                         const playerRevived = p.playerBeingRevived;
 
-                        if (playerRevived){
+                        if (playerRevived) {
                             playerRevived.downed = false;
                             playerRevived.health = Constants.player.reviveHealth;
                             playerRevived.recalculateSpeed();
 
                             playerRevived.fullDirtyObjects.add(playerRevived);
                             this.fullDirtyObjects.add(playerRevived);
-
                         }
                     }
                     if (p.performActionAgain) {
@@ -449,7 +442,7 @@ export class Game {
                 if (p.shootStart) {
                     p.shootStart = false;
                     // I put this outside b/c it would not work inside
-                    if (p.weaponCooldownOver()){
+                    if (p.weaponCooldownOver()) {
                         if (p.activeWeapon.weaponType === WeaponType.Throwable) {
                             if (!p.anim.active) {
                                 p.cancelAction();
@@ -463,8 +456,8 @@ export class Game {
                                 p.recalculateSpeed();
                             }
                             p.ticksSinceCookStart = 0;
-                        }else{
-                            //we do not want the cooldown timer to start if throwing a nade
+                        } else {
+                            // we do not want the cooldown timer to start if throwing a nade
                             p.activeWeapon.cooldown = Date.now();
                             if (p.activeWeapon.weaponType === WeaponType.Melee) {
                                 p.useMelee();
@@ -486,12 +479,12 @@ export class Game {
                         p.activeWeapon.cooldown = Date.now();
                         p.shootGun();
                     }
-                }else if (p.shootHold && p.activeWeapon.weaponType === WeaponType.Throwable && p.ticksSinceCookStart != Weapons[p.activeWeapon.typeString].fuseTime * 30){
-                    if (p.weaponCooldownOver() && p.anim.active){
+                } else if (p.shootHold && p.activeWeapon.weaponType === WeaponType.Throwable && p.ticksSinceCookStart != Weapons[p.activeWeapon.typeString].fuseTime * 30) {
+                    if (p.weaponCooldownOver() && p.anim.active) {
                         p.ticksSinceCookStart++;
                     }
-                }else if (p.ticksSinceCookStart >= 0){
-                    if (Date.now() - p.weapons[3].cooldown >= p.weapons[3].cooldownDuration){
+                } else if (p.ticksSinceCookStart >= 0) {
+                    if (Date.now() - p.weapons[3].cooldown >= p.weapons[3].cooldownDuration) {
                         p.weapons[3].cooldown = Date.now();
                         p.useThrowable();
                         p.anim.active = false;
@@ -502,7 +495,7 @@ export class Game {
                         p.ticksSinceCookStart = -1;
                         p.recalculateSpeed();
                         p.fullDirtyObjects.add(p);
-                    }else{
+                    } else {
                         p.ticksSinceCookStart = -1;
                     }
                 } else {
@@ -690,7 +683,7 @@ export class Game {
                 this.tickTimes = [];
             }
 
-            const newDelay: number = Math.max(0, 30 - tickTime);
+            const newDelay: number = Math.max(0, (1000 / 240) - tickTime);
             this.tick(newDelay);
         }, delay);
     }
@@ -706,21 +699,20 @@ export class Game {
 
     addPlayer(socket, name, loadout): Player {
         let numTeammates = 0;
-        for (const player of this.livingPlayers){
-            if (player.loadout.outfit == TypeToId[loadout.outfit]){
+        for (const player of this.livingPlayers) {
+            if (player.loadout.outfit == TypeToId[loadout.outfit]) {
                 numTeammates++;
             }
         }
-        
 
         let groupId: number = TypeToId[loadout.outfit];
         /**
          * max number of players allowed per team
          */
-       const maxTeammates = 2;
-        //if numTeammates == maxTeammates, the team already has 4 people so the player can't join it
-        if (numTeammates == maxTeammates){
-            groupId = TypeToId["outfitBase"];
+        const maxTeammates = 2;
+        // if numTeammates == maxTeammates, the team already has 4 people so the player can't join it
+        if (numTeammates == maxTeammates) {
+            groupId = TypeToId.outfitBase;
             loadout.outfit = "outfitBase";
         }
 
@@ -753,11 +745,11 @@ export class Game {
             p.fullDirtyObjects.add(p);
         }
 
-        //this is where you add loot you want to spawn on the player when they join the game
-        //do NOT do it inside the constructor
+        // this is where you add loot you want to spawn on the player when they join the game
+        // do NOT do it inside the constructor
 
-        //spawn m870 next to player so they can choose between spas12 and m870
-        if (p.isSpectator == false){
+        // spawn m870 next to player so they can choose between spas12 and m870
+        if (!p.isSpectator) {
             new Loot(this, "m870", p.position, 0, 1);
             new Loot(this, "famas", p.position, 0, 1);
             new Loot(this, "scar", p.position, 0, 1);
@@ -768,7 +760,7 @@ export class Game {
             new Loot(this, "m4a1", p.position, 0, 1);
             new Loot(this, "qbb97", p.position, 0, 1);
             new Loot(this, "m1a1", p.position, 0, 1);
-            new Loot(this, "mp220", p.position, 0, 1); 
+            new Loot(this, "mp220", p.position, 0, 1);
             // new Loot(this, "usas", p.position, 0, 1);
             // new Loot(this, "sv98", p.position, 0, 1);
             // new Loot(this, "mirv", p.position, 0, 1);
@@ -811,7 +803,7 @@ export class Game {
             this.gas.posOld = this.gas.posNew.clone();
             // this.gas.posOld = new Vec2(100, 100);
             if (currentStage.radNew !== 0) {
-                this.gas.posNew = randomPointInsideCircle(this.gas.posOld, (currentStage.radOld - currentStage.radNew)/4);
+                this.gas.posNew = randomPointInsideCircle(this.gas.posOld, (currentStage.radOld - currentStage.radNew) / 4);
                 // this.gas.posNew = randomPointInsideCircle(new Vec2(157.5,157.5), 10);
             } else {
                 this.gas.posNew = this.gas.posOld.clone();
@@ -865,14 +857,13 @@ export class Game {
         if (!p.dead) {
             // If player is dead, alive count has already been decremented
             this.aliveCountDirty = true;
-            
+
             if (false) {
                 // this.dynamicObjects.delete(p);
                 // this.partialDirtyObjects.delete(p);
                 // this.fullDirtyObjects.delete(p);
                 // this.deletedPlayers.add(p);
                 // this.deletedObjects.add(p);
-                
 
                 // p.direction = Vec2(1, 0);
                 p.disconnected = true;
@@ -883,10 +874,10 @@ export class Game {
                 p.direction = Vec2(1, 0);
                 p.disconnected = true;
                 // p.deadPos = p.body.getPosition().clone();
-                if (p.downed){
+                if (p.downed) {
                     p.damage(p.health, undefined, undefined, DamageType.Gas);
                 }
-                this.fullDirtyObjects.add(p); 
+                this.fullDirtyObjects.add(p);
             }
         }
     }

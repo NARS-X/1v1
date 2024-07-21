@@ -23,7 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deepCopy = exports.readDirectory = exports.getContentType = exports.readPostedJSON = exports.readJSON = exports.log = exports.removeFrom = exports.Emote = exports.DamageRecord = exports.Item = void 0;
+exports.readDirectory = exports.readJSON = exports.Emote = exports.DamageRecord = exports.Item = void 0;
+exports.removeFrom = removeFrom;
+exports.log = log;
+exports.readPostedJSON = readPostedJSON;
+exports.getContentType = getContentType;
+exports.deepCopy = deepCopy;
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 class Item {
@@ -69,7 +74,6 @@ function removeFrom(array, value) {
     if (index !== -1)
         array.splice(index, 1);
 }
-exports.removeFrom = removeFrom;
 /**
  * Log a message to the console.
  * @param message The content to print.
@@ -78,7 +82,6 @@ function log(message) {
     const date = new Date();
     console.log(`[${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}] ${message}`);
 }
-exports.log = log;
 /**
  * Read a JSON file.
  * @param path The path to the JSON file.
@@ -136,7 +139,6 @@ function readPostedJSON(res, cb, err) {
     /* Register error cb */
     res.onAborted(err);
 }
-exports.readPostedJSON = readPostedJSON;
 /**
  * Get the MIME type of a file.
  * @param file The name or path to the file.
@@ -172,7 +174,6 @@ function getContentType(file) {
     }
     return contentType;
 }
-exports.getContentType = getContentType;
 /**
  * Recursively read a directory.
  * @param dir The absolute path to the directory.
@@ -201,5 +202,4 @@ exports.readDirectory = readDirectory;
 function deepCopy(object) {
     return JSON.parse(JSON.stringify(object));
 }
-exports.deepCopy = deepCopy;
 //# sourceMappingURL=misc.js.map

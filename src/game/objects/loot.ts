@@ -13,7 +13,7 @@ export class Loot extends GameObject {
     isPlayer = false;
     isObstacle = false;
     isBullet = false;
-    isLoot = true; 
+    isLoot = true;
     collidesWith = {
         player: false,
         obstacle: true,
@@ -40,15 +40,15 @@ export class Loot extends GameObject {
         position?: Vec2,
         layer: number = 0,
         count: number = 0
-        ) {
+    ) {
         if (!TypeToId[typeString]) {
             log(`[WARNING] Unknown loot item: ${typeString}`);
             typeString = "9mm";
             count = 60;
         }
-        //8xs and 15xs are unfair so theyre not allowed to spawn
+        // 8xs and 15xs are unfair so theyre not allowed to spawn
         super(game, typeString, position || Vec2(0, 0), layer); // Ensure a default position if not provided
-        if (typeString == "8xscope" || typeString == "15xscope"){
+        if (typeString == "8xscope" || typeString == "15xscope") {
             return;
         }
         this.kind = ObjectKind.Loot;
@@ -64,7 +64,7 @@ export class Loot extends GameObject {
         this.interactionRad = radius;
         this.isThrowable = Weapons[typeString]?.type === "throwable";
         this.oldPos = position || Vec2(0, 0); // Ensure a default position if not provided
-    
+
         // Create the body
         this.body = game.world.createBody({
             type: "dynamic",
@@ -78,11 +78,11 @@ export class Loot extends GameObject {
             friction: 0.0,
             userData: this
         });
-    
+
         // Push the loot in a random direction
         const angle: number = Math.random() * Math.PI * 2;
         this.body.setLinearVelocity(Vec2(Math.cos(angle), Math.sin(angle)).mul(0.005));
-    
+
         game.loot.add(this);
         game.dynamicObjects.add(this);
         game.fullDirtyObjects.add(this);
@@ -94,16 +94,14 @@ export class Loot extends GameObject {
         setTimeout(() => {
             this.delete();
         }, deleteTime);
-
     }
-    
 
     get position(): Vec2 {
         return this.body!.getPosition();
     }
 
     interact(p: Player): void {
-        if (Weapons[this.typeString]?.type === "throwable"){
+        if (Weapons[this.typeString]?.type === "throwable") {
             return;
         }
         let result: PickupMsgType = PickupMsgType.Success;
@@ -140,7 +138,7 @@ export class Loot extends GameObject {
             if (Weapons[this.typeString]?.type === "throwable") {
                 p.weapons[3].typeString = this.typeString;
                 p.weapons[3].typeId = this.typeId;
-                if (p.activeWeapon.weaponType == WeaponType.Melee){
+                if (p.activeWeapon.weaponType == WeaponType.Melee) {
                     p.switchSlot(3);
                 }
             }
@@ -318,17 +316,13 @@ export class Loot extends GameObject {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     damage(amount: number, source): void { }
 
-    delete(){
+    delete() {
         this.game.dynamicObjects.delete(this);
         this.game.loot.delete(this);
         this.game.deletedObjects.add(this);
         this.game.world.destroyBody(this.body!);
         this.interactable = false;
     }
-
-
-
-
 }
 
 export interface LooseLoot {
@@ -349,7 +343,7 @@ export function generateLooseLootFromArray(game: Game, loot: LooseLoot[], positi
                 weights.push(lootTable[item].weight);
             }
 
-            let selectedItem: string = weightedRandom(items, weights);
+            const selectedItem: string = weightedRandom(items, weights);
             if (selectedItem === "nothing") continue;
             if (selectedItem.startsWith("tier_")) {
                 const lootItem = deepCopy(loot[i]);

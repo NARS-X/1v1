@@ -14,7 +14,7 @@ const loot_1 = require("./objects/loot");
 const stair_1 = require("./stair");
 // type CircleBound = ObjectBounds & { type: CollisionType.Circle };
 // Potential naming collision with the native Map class
-//renamed from Map to GameMap to avoid collisions
+// renamed from Map to GameMap to avoid collisions
 class GameMap {
     name;
     seed;
@@ -285,7 +285,7 @@ class GameMap {
                     this.genBuilding(partType, part, partPosition, partOrientation, layer);
                     break;
                 case "obstacle":
-                    //ensures that mosin trees do not randomly spawn
+                    // ensures that mosin trees do not randomly spawn
                     if (partType == "tree_03") {
                         break;
                     }
@@ -409,9 +409,9 @@ class GameMap {
     }
     getRandomPositionFor(kind, object, orientation = 0, scale = 1, getPosition, ignoreRivers, 
     /**
-     * this is only passed in when getting a random spawn position for a player
-     * it's used in battleroyale since teammates are supposed to spawn next to each other
-     */
+         * this is only passed in when getting a random spawn position for a player
+         * it's used in battleroyale since teammates are supposed to spawn next to each other
+         */
     playerGroupId) {
         const isBuilding = kind === constants_1.ObjectKind.Building || kind === constants_1.ObjectKind.Structure;
         const thisBounds = [];
@@ -460,7 +460,7 @@ class GameMap {
                 return (0, math_1.randomVec)(minEdgeDist, this.width - minEdgeDist, minEdgeDist, this.height - minEdgeDist);
             };
         }
-        //REMOVE
+        // REMOVE
         let foundPosition = false;
         let thisPos;
         let attempts = 0;
@@ -494,47 +494,44 @@ class GameMap {
                     thisBound.min = newBound.min;
                     thisBound.max = newBound.max;
                 }
-                if (kind == constants_1.ObjectKind.Player) {
-                    // prevents players from spawning either on top of each other or very close
-                    if (this.game.gamemode == constants_1.GameMode.DeathMatch) {
-                        for (const p of this.game.livingPlayers) {
-                            if ((0, math_1.distanceBetween)(thisPos, p.position) < 64) {
-                                shouldContinue = true;
-                                break;
-                            }
-                        }
-                    }
-                    else if (this.game.gamemode == constants_1.GameMode.BattleRoyale) {
-                        if (data_1.Config.skinsAreTeam == false) {
-                            for (const p of this.game.livingPlayers) {
-                                if ((0, math_1.distanceBetween)(thisPos, p.position) < 64) {
-                                    shouldContinue = true;
-                                    break;
-                                }
-                            }
-                        }
-                        else {
-                            let randomTeammate;
-                            for (const p of this.game.livingPlayers) {
-                                if (p.loadout.outfit == playerGroupId) {
-                                    randomTeammate = p;
-                                    break;
-                                }
-                            }
-                            if (randomTeammate == undefined) {
-                                for (const p of this.game.livingPlayers) {
-                                    if ((0, math_1.distanceBetween)(thisPos, p.position) < 64) {
-                                        shouldContinue = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            else {
-                                thisPos = (0, math_1.randomPointInsideCircle)(randomTeammate.position, 10);
-                            }
-                        }
-                    }
-                }
+                // if (kind == ObjectKind.Player){
+                //     // prevents players from spawning either on top of each other or very close
+                //     if (this.game.gamemode == GameMode.DeathMatch){
+                //         for (const p of this.game.livingPlayers){
+                //             if (distanceBetween(thisPos, p.position) < 16){
+                //                 shouldContinue = true;
+                //                 break;
+                //             }
+                //         }
+                //     }else if (this.game.gamemode == GameMode.BattleRoyale){
+                //         if (Config.skinsAreTeam == false){
+                //             for (const p of this.game.livingPlayers){
+                //                 if (distanceBetween(thisPos, p.position) < 64){
+                //                     shouldContinue = true;
+                //                     break;
+                //                 }
+                //             }
+                //         }else{
+                //             let randomTeammate: Player | undefined;
+                //             for (const p of this.game.livingPlayers){
+                //                 if (p.loadout.outfit == playerGroupId){
+                //                     randomTeammate = p;
+                //                     break;
+                //                 }
+                //             }
+                //             if (randomTeammate == undefined){
+                //                 for (const p of this.game.livingPlayers){
+                //                     if (distanceBetween(thisPos, p.position) < 64){
+                //                         shouldContinue = true;
+                //                         break;
+                //                     }
+                //                 }
+                //             }else{
+                //                 thisPos = randomPointInsideCircle(randomTeammate.position, 10);
+                //             }
+                //         }
+                //     }
+                // }
                 for (const that of this.game.staticObjects) {
                     if (that instanceof building_1.Building) {
                         // obstacles and players should still spawn on top of bunkers

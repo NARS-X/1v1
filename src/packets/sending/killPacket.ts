@@ -1,14 +1,14 @@
 // Import necessary modules and types
 import { SendingPacket } from "../sendingPacket";
-import { DamageType, MsgType } from "../../utils/constants";
+import { type DamageType, MsgType } from "../../utils/constants";
 import type { SurvivBitStream } from "../../utils/survivBitStream";
-import { Player } from "../../game/objects/player";
+import { type Player } from "../../game/objects/player";
 
 // Extend SendingPacket and use Player type for killer
 export class KillPacket extends SendingPacket {
     readonly damageType: number;
     readonly killer?: Player;
-    readonly killedWith?: { isObstacle: any; typeId: number; };
+    readonly killedWith?: { isObstacle: any, typeId: number };
 
     // Constructor with Player type for killer parameter
     constructor(p: Player, damageType: DamageType, killer?: Player, killedWith?: any) {
@@ -29,7 +29,7 @@ export class KillPacket extends SendingPacket {
         stream.writeUint16(this.p!.id);
         stream.writeUint16(this.killer?.id ?? 0);
         stream.writeUint16(this.killer?.id ?? 0);
-        stream.writeString(this.killer?.name ?? '');
+        stream.writeString(this.killer?.name ?? "");
         stream.writeUint8(this.killer?.kills ?? 0);
         stream.writeBoolean(false);
         stream.writeBoolean(true);

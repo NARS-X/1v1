@@ -11,8 +11,8 @@ export const Explosions = readJSON<any>("data/explosions.json");
 export const LootTables = readJSON<any>("data/lootTables.json");
 export const RedZoneStages = {
     DeathMatch: readJSON<any>("data/dmRedZoneStages.json"),
-    BattleRoyale: readJSON<any>("data/brRedZoneStages.json"),
-}
+    BattleRoyale: readJSON<any>("data/brRedZoneStages.json")
+};
 export const AllowedSkins = readJSON<any>("data/allowedSkins.json");
 export const AllowedMelee = readJSON<any>("data/allowedMelee.json");
 export const AllowedEmotes = readJSON<any>("data/allowedEmotes.json");

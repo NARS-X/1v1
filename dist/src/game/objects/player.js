@@ -17,15 +17,15 @@ const loot_1 = require("./loot");
 const bullet_1 = require("../bullet");
 const obstacle_1 = require("./obstacle");
 const projectile_1 = require("./projectile");
-//key is # of kills required to get the reward
-//value is the mapping from the old gun to the reward gun
+// key is # of kills required to get the reward
+// value is the mapping from the old gun to the reward gun
 const killstreakRewards = new Map();
-killstreakRewards.set(300, { "scout": "mosin" });
+killstreakRewards.set(300, { scout: "mosin" });
 killstreakRewards.set(500, {
-    "m870": "saiga",
-    "deagle": "awc"
+    m870: "saiga",
+    deagle: "awc"
 });
-killstreakRewards.set(800, { "mosin": "sv98" });
+killstreakRewards.set(800, { mosin: "sv98" });
 class Player extends gameObject_1.GameObject {
     isPlayer = true;
     isObstacle = false;
@@ -142,7 +142,7 @@ class Player extends gameObject_1.GameObject {
         frag: 3,
         smoke: 0,
         strobe: 0,
-        mirv: 0,
+        mirv: 3,
         snowball: 0,
         potato: 0,
         bandage: 30,
@@ -257,8 +257,8 @@ class Player extends gameObject_1.GameObject {
                 }
             }
         }
-        //all this if statement does is give unique groupids to defaults so they dont count as teammates
-        if (data_1.Config.skinsAreTeam && this.loadout.outfit != data_1.TypeToId["outfitBase"]) {
+        // all this if statement does is give unique groupids to defaults so they dont count as teammates
+        if (data_1.Config.skinsAreTeam && this.loadout.outfit != data_1.TypeToId.outfitBase) {
             this.groupId = this.teamId = this.loadout.outfit;
         }
         else {
@@ -267,9 +267,9 @@ class Player extends gameObject_1.GameObject {
         // Weapon The Player Is Holding
         const initialGun1 = {
             typeString: "spas12",
-            typeId: data_1.TypeToId["spas12"],
+            typeId: data_1.TypeToId.spas12,
             ammo: 9,
-            customClip: data_1.Weapons["spas12"].maxClip,
+            customClip: data_1.Weapons.spas12.maxClip,
             cooldown: 0,
             cooldownDuration: 0,
             switchCooldown: 0,
@@ -308,9 +308,9 @@ class Player extends gameObject_1.GameObject {
         // }
         const initialGun2 = {
             typeString: "mosin",
-            typeId: data_1.TypeToId["mosin"],
+            typeId: data_1.TypeToId.mosin,
             ammo: 5,
-            customClip: data_1.Weapons["mosin"].maxClip,
+            customClip: data_1.Weapons.mosin.maxClip,
             cooldown: 0,
             cooldownDuration: 0,
             switchCooldown: 0,
@@ -482,7 +482,7 @@ class Player extends gameObject_1.GameObject {
     }
     switchSlot(slot, skipSlots) {
         if (this.selectedWeaponSlot == slot && slot == 3) {
-            const throwables = Object.keys(data_1.LootTables["tier_throwables"]).filter(t => this.inventory[t] != 0);
+            const throwables = Object.keys(data_1.LootTables.tier_throwables).filter(t => this.inventory[t] != 0);
             const selectedThrowable = this.activeWeapon.typeString;
             const newSelectedThrowableIndex = (throwables.findIndex(t => t == selectedThrowable) + 1) % throwables.length;
             const newSelectedThrowable = throwables[newSelectedThrowableIndex];
@@ -548,7 +548,7 @@ class Player extends gameObject_1.GameObject {
                 }
                 this.inventoryDirty = true;
             }
-            //defined up here since it gets changed and needs to be used after its changed
+            // defined up here since it gets changed and needs to be used after its changed
             const selectedWeaponString = this.weapons[slot].typeString;
             const selectedThrowableCount = this.weapons[slot].weaponType == constants_1.WeaponType.Throwable ? this.inventory[selectedWeaponString] : -1;
             if (slot === constants_1.ItemSlot.Melee) {
@@ -562,7 +562,7 @@ class Player extends gameObject_1.GameObject {
                 };
             }
             else if (slot === constants_1.ItemSlot.Throwable) {
-                const throwables = Object.keys(data_1.LootTables["tier_throwables"]).filter(t => this.inventory[t] != 0);
+                const throwables = Object.keys(data_1.LootTables.tier_throwables).filter(t => this.inventory[t] != 0);
                 if (throwables.length > 1) {
                     const newSelectedThrowableIndex = (throwables.findIndex(t => t == selectedWeaponString) + 1) % throwables.length;
                     const newSelectedThrowable = throwables[newSelectedThrowableIndex];
@@ -702,12 +702,12 @@ class Player extends gameObject_1.GameObject {
         this.lastWeaponSlot = lastWeapon;
     }
     weaponCooldownOver() {
-        //true if enough time has passed from the last shot to successfully shoot again
+        // true if enough time has passed from the last shot to successfully shoot again
         const a = Date.now() - this.activeWeapon.cooldown >= this.activeWeapon.cooldownDuration;
         if (this.activeWeapon.weaponType == constants_1.WeaponType.Throwable) {
             return a;
         }
-        //true if weapon is not a sniper and ???
+        // true if weapon is not a sniper and ???
         let b;
         if (this.activeWeaponInfo.weaponClass !== "sniper") {
             b = Date.now() - (this.activeWeaponInfo.switchDelay * 1000) >= this.activeWeapon.switchCooldown;
@@ -826,11 +826,11 @@ class Player extends gameObject_1.GameObject {
         return false;
     }
     revive() {
-        if (data_1.Config.skinsAreTeam == false) {
+        if (!data_1.Config.skinsAreTeam) {
             return;
         }
-        //if revive is already in progress or there is no one to revive, return
-        if (this.actionDirty || this.canRevive() == false) {
+        // if revive is already in progress or there is no one to revive, return
+        if (this.actionDirty || !this.canRevive()) {
             return;
         }
         this.cancelAction();
@@ -839,8 +839,8 @@ class Player extends gameObject_1.GameObject {
             this.anim.type = 6;
             this.anim.seq = 1;
             this.anim.time = 0;
-            this.anim.duration = constants_1.Constants.player.reviveDuration * 30 + 10; //added 10 ticks to sync animation to action
-            this.reviveState = 1; //player is reviving someone
+            this.anim.duration = constants_1.Constants.player.reviveDuration * 30 + 10; // added 10 ticks to sync animation to action
+            this.reviveState = 1; // player is reviving someone
         }
         // this.actionItem.typeString = "revive-teammate";
         // this.actionItem.typeString = "healthkit";
@@ -856,16 +856,16 @@ class Player extends gameObject_1.GameObject {
         this.fullDirtyObjects.add(this);
     }
     crawl() {
-        //only want to do crawl animation if player is knocked down
+        // only want to do crawl animation if player is knocked down
         // if (this.downed == false){
         //     return;
         // }
         if (!this.anim.active) {
             this.anim.active = true;
-            //this calculates whether to play move forward/backward animation based on the direction the player is facing
+            // this calculates whether to play move forward/backward animation based on the direction the player is facing
             const angle = (0, math_1.radiansToDegrees)((0, math_1.unitVecToRadians)(this.direction));
-            if ((angle >= -90 && angle <= 90) && this.movingRight
-                || (angle >= 0 && angle <= 180) && this.movingUp) {
+            if ((angle >= -90 && angle <= 90) && this.movingRight ||
+                (angle >= 0 && angle <= 180) && this.movingUp) {
                 this.anim.type = 4;
             }
             else {
@@ -907,7 +907,7 @@ class Player extends gameObject_1.GameObject {
         this.game.projectiles.add(proj);
         this.inventory[this.weapons[3].typeString]--;
         if (this.inventory[this.weapons[3].typeString] == 0) {
-            const throwables = Object.keys(data_1.LootTables["tier_throwables"]).filter(t => this.inventory[t] != 0);
+            const throwables = Object.keys(data_1.LootTables.tier_throwables).filter(t => this.inventory[t] != 0);
             if (throwables.length > 0) {
                 const newSelectedThrowableIndex = (throwables.findIndex(t => t == this.weapons[3].typeString) + 1) % throwables.length;
                 const newSelectedThrowable = throwables[newSelectedThrowableIndex];
@@ -924,7 +924,7 @@ class Player extends gameObject_1.GameObject {
                 }
             }
         }
-        this.weapons[3].count = this.inventory[this.weapons[3].typeString];
+        (this.weapons[3]).count = this.inventory[this.weapons[3].typeString];
         this.inventoryDirty = true;
         this.weaponsDirty = true;
         this.fullDirtyObjects.add(this);
@@ -946,7 +946,7 @@ class Player extends gameObject_1.GameObject {
         }
         const weaponTypeString = this.activeWeapon.typeString;
         const weapon = data_1.Weapons[weaponTypeString];
-        //all this timeout does is keep the player moving slow while theyre still shooting
+        // all this timeout does is keep the player moving slow while theyre still shooting
         setTimeout(() => {
             Player.resetSpeedAfterShooting(this);
         }, weapon.fireDelay * 700); // Since RecoilTime is 1000000 on every gun in the data, approximate it with 70% of the time between shots.
@@ -1047,7 +1047,7 @@ class Player extends gameObject_1.GameObject {
             this.recalculateSpeed();
         }
         else if (this.actionType === constants_1.Constants.Action.Revive) {
-            //you need to reset the animation state of the player since revives have an animation attached and useitems dont
+            // you need to reset the animation state of the player since revives have an animation attached and useitems dont
             this.anim.active = false;
             this.anim.type = 0;
             this.anim.seq = 0;
@@ -1072,7 +1072,7 @@ class Player extends gameObject_1.GameObject {
             return;
         const weaponInfo = this.activeWeaponInfo;
         if (this.activeWeapon.ammo !== this.activeWeapon.customClip && this.inventory[weaponInfo.ammo] !== 0) { // ammo here refers to the TYPE of ammo used by the gun, not the quantity
-            //when mosin ammo reaches 0, make sure the action time is for a full reload not an incremental reload   
+            // when mosin ammo reaches 0, make sure the action time is for a full reload not an incremental reload
             if (weaponInfo.name == "Mosin-Nagant" && this.activeWeapon.ammo == 0) {
                 this.doAction(this.activeWeapon.typeString, weaponInfo.reloadTimeAlt, constants_1.Constants.Action.Reload, true);
             }
@@ -1111,7 +1111,7 @@ class Player extends gameObject_1.GameObject {
     refillGunsForKill() {
         for (let i = 0; i < 2; i++) {
             const weapon = this.weapons[i];
-            if (weapon.typeString == '') {
+            if (weapon.typeString == "") {
                 continue;
             }
             const weaponInfo = data_1.Weapons[weapon.typeString];
@@ -1119,7 +1119,7 @@ class Player extends gameObject_1.GameObject {
                 weapon.ammo = Math.ceil(weapon.customClip / 2);
             }
             if (this.activeWeapon == weapon) {
-                //for mosin to reset certain ammo stats 
+                // for mosin to reset certain ammo stats
                 if (this.actionType == constants_1.Constants.Action.Reload) {
                     this.cancelAction();
                     this.reload();
@@ -1137,7 +1137,7 @@ class Player extends gameObject_1.GameObject {
                     break;
                 }
             }
-            if (foundWeapon == false) {
+            if (!foundWeapon) {
                 return;
             }
             const newWeaponTypeString = killstreakRewards.get(kills)?.[weapon.typeString];
@@ -1172,16 +1172,16 @@ class Player extends gameObject_1.GameObject {
             this._health = 0;
         if (this.dead)
             return;
-        //the purpose of this code is to not allow players with the same skin to damage each other to simulate a "teams" mode
+        // the purpose of this code is to not allow players with the same skin to damage each other to simulate a "teams" mode
         if (data_1.Config.skinsAreTeam) {
             if (!(this.loadout.outfit == data_1.TypeToId.outfitBase)) {
-                //this checks if the damage came from another player, if not we dont need to check any further
+                // this checks if the damage came from another player, if not we dont need to check any further
                 if (source != null && source != this && source instanceof Player) {
-                    //this checks if the current player and the damage dealing player (source) have the same skin
+                    // this checks if the current player and the damage dealing player (source) have the same skin
                     if (source.loadout.outfit == this.loadout.outfit) {
-                        //the code below checks for 2 things:
-                        //1. if players can still join the game
-                        //2. if every player in the game has the same skin
+                        // the code below checks for 2 things:
+                        // 1. if players can still join the game
+                        // 2. if every player in the game has the same skin
                         let allPlayersHaveSameSkin = true;
                         const randomPlayerSkin = this.loadout.outfit;
                         for (const player of this.game.livingPlayers) {
@@ -1190,10 +1190,10 @@ class Player extends gameObject_1.GameObject {
                                 break;
                             }
                         }
-                        //if players can still join the game AND all players do not have the same skin
-                        //then friendly fire is still disabled
+                        // if players can still join the game AND all players do not have the same skin
+                        // then friendly fire is still disabled
                         if (!this.game.allowJoin && allPlayersHaveSameSkin) {
-                            //inverted guard clause :)
+                            // inverted guard clause :)
                         }
                         else {
                             return;
@@ -1216,13 +1216,12 @@ class Player extends gameObject_1.GameObject {
         }
         this.damageTaken += finalDamage;
         if (source instanceof Player) {
-            //we only care about the last player that damaged "this" while "this" wasn't downed
-            if (this.downed == false) {
+            // we only care about the last player that damaged "this" while "this" wasn't downed
+            if (!this.downed) {
                 this.lastPlayerToDamageThis = source;
                 source.damageDealt += finalDamage;
             }
         }
-        ;
         this._health -= finalDamage;
         this.healthDirty = true;
         if (this._health === 0) {
@@ -1233,29 +1232,29 @@ class Player extends gameObject_1.GameObject {
                     numTeammates++;
                 }
             }
-            //revives are only a thing in battleroyale
+            // revives are only a thing in battleroyale
             // if player has default skin or if theyre disconnected, they cannot be downed and this logic is skipped
-            if (this.game.gamemode == constants_1.GameMode.BattleRoyale) {
-                if (data_1.Config.skinsAreTeam && this.downed == false && !(this.loadout.outfit == data_1.TypeToId.outfitBase) && this.disconnected == false && numTeammates != 0) {
-                    this.health = 100;
-                    let bleedingDamageId = setInterval(() => {
-                        if (this._health == 0 || this.downed == false) {
-                            clearInterval(bleedingDamageId);
-                        }
-                        this.damage(4, undefined, undefined, constants_1.DamageType.Bleeding);
-                    }, 1000);
-                    this.boost = 0;
-                    this.downed = true;
-                    this.fullUpdate = true;
-                    this.recalculateSpeed();
-                    this.game.fullDirtyObjects.add(this);
-                    this.fullDirtyObjects.add(this);
-                    return;
-                }
-            }
-            //if player bleeds out, give the kill to the last player that damaged "this" while not downed
+            // if (this.game.gamemode == GameMode.BattleRoyale){
+            //     if (Config.skinsAreTeam && this.downed == false && !(this.loadout.outfit == TypeToId.outfitBase) && this.disconnected == false && numTeammates != 0){
+            //         this.health = 100;
+            //         let bleedingDamageId = setInterval(() => {
+            //             if (this._health == 0 || this.downed == false){
+            //                 clearInterval(bleedingDamageId);
+            //             }
+            //             this.damage(4, undefined, undefined, DamageType.Bleeding);
+            //         }, 1000);
+            //         this.boost = 0;
+            //         this.downed = true;
+            //         this.fullUpdate = true;
+            //         this.recalculateSpeed();
+            //         this.game.fullDirtyObjects.add(this);
+            //         this.fullDirtyObjects.add(this);
+            //         return;
+            //     }
+            // }
+            // if player bleeds out, give the kill to the last player that damaged "this" while not downed
             source = this.lastPlayerToDamageThis;
-            //Drop nade if player was cooking one
+            // Drop nade if player was cooking one
             if (this.anim.active && this.anim.type == constants_1.Constants.Anim.Cook) {
                 this.useThrowable();
             }
@@ -1301,7 +1300,7 @@ class Player extends gameObject_1.GameObject {
                 source.inventory.frag += 3;
                 if (source.weapons[3].typeString == "") {
                     source.weapons[3].typeString = "frag";
-                    source.weapons[3].typeId = data_1.TypeToId["frag"];
+                    source.weapons[3].typeId = data_1.TypeToId.frag;
                 }
                 source.inventoryDirty = true;
                 source.weaponsDirty = true;
@@ -1601,6 +1600,9 @@ class Player extends gameObject_1.GameObject {
         }
     }
     interactWith(object) {
+        if (["308sub", "flare", "45acp"].includes(object.typeString)) {
+            return;
+        }
         if (this.downed) {
             return;
         }

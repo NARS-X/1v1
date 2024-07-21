@@ -241,24 +241,24 @@ export function orientationToRad(orientation: Orientation): number {
     return (orientation % 4) * 0.5 * Math.PI;
 }
 
-export function directionToOrientation(direction: Vec2): Orientation{
+export function directionToOrientation(direction: Vec2): Orientation {
     const [x, y] = [direction.x, direction.y];
 
-    if (Math.abs(x) > Math.abs(y)){
+    if (Math.abs(x) > Math.abs(y)) {
         return x > 0 ? 0 : 2;
-    }else {
+    } else {
         return y > 0 ? 1 : 3;
     }
 }
 
 export function getOppositeOrientation(orientation: Orientation): Orientation {
-    if (orientation == 0){
+    if (orientation == 0) {
         return 2;
-    }else if (orientation == 1){
+    } else if (orientation == 1) {
         return 3;
-    }else if (orientation == 2){
+    } else if (orientation == 2) {
         return 0;
-    }else{
+    } else {
         return 1;
     }
 }
@@ -426,12 +426,12 @@ export function lerp(t: number, a: number, b: number): number {
    * @param {number} valueMax Output max
    * @returns {number}        Interpolated number
    */
-export function lerpRangeRemap(t: number, tMin: number, tMax: number, valueMin: number, valueMax: number): number{
+export function lerpRangeRemap(t: number, tMin: number, tMax: number, valueMin: number, valueMax: number): number {
     const clampedT = clamp(t, tMin, tMax);
     return ((clampedT - tMin) * (valueMax - valueMin)) / (tMax - tMin) + valueMin;
 }
 
-export function convertToMilliseconds(minutes: number, seconds: number){
+export function convertToMilliseconds(minutes: number, seconds: number) {
     const minutesInMilliseconds = minutes * 60 * 1000; // 1 minute = 60 seconds * 1000 milliseconds
     const secondsInMilliseconds = seconds * 1000; // 1 second = 1000 milliseconds
 

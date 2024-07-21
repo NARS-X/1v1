@@ -11,25 +11,24 @@ import { Config, TypeToId } from "../../utils/data";
 import { Vec2 } from "planck";
 import { type Obstacle } from "../../game/objects/obstacle";
 import { Loot } from "../../game/objects/loot";
-let i = 0;
+const i = 0;
 export class InputPacket extends ReceivingPacket {
     deserialize(stream: SurvivBitStream): void {
         const p = this.p;
         if (p.dead) return;
 
         stream.readUint8(); // Discard second byte (this.seq)
-        
+
         // Movement
         p.movingLeft = stream.readBoolean();
         p.movingRight = stream.readBoolean();
         p.movingUp = stream.readBoolean();
         p.movingDown = stream.readBoolean();
-        
+
         // Shooting
         const shootStart = stream.readBoolean();
         p.shootStart = p.shootStart ? true : shootStart;
         p.shootHold = stream.readBoolean();
-
 
         // Mobile stuff
         stream.readBoolean(); // Portrait
@@ -64,7 +63,7 @@ export class InputPacket extends ReceivingPacket {
             const input = stream.readUint8();
             switch (input) { // TODO Remove redundant code
                 case InputType.Interact: {
-                    //if theres no revive keybind set default to interact keybind
+                    // if theres no revive keybind set default to interact keybind
                     p.revive();
 
                     let minDistInteractable = Number.MAX_VALUE; let minDist = Number.MAX_VALUE;

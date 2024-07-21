@@ -168,7 +168,7 @@ class Obstacle extends gameObject_1.GameObject {
             this.puzzlePiece = puzzlePiece;
             this.parentBuilding.puzzlePieces.push(this);
         }
-        //this is where crates are filled with the loot they will drop when broken
+        // this is where crates are filled with the loot they will drop when broken
         if (data.loot) {
             this.loot = [];
             for (const loot of data.loot) {
@@ -204,7 +204,7 @@ class Obstacle extends gameObject_1.GameObject {
         }
         else {
             if (gunsThatCantSpawn.includes(selectedItem)) {
-                ////
+                /// /
             }
             else {
                 this.addLoot(selectedItem, lootTable[selectedItem].count);

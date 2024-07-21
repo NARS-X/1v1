@@ -272,7 +272,7 @@ export class Obstacle extends GameObject {
             this.parentBuilding!.puzzlePieces.push(this);
         }
 
-        //this is where crates are filled with the loot they will drop when broken
+        // this is where crates are filled with the loot they will drop when broken
         if (data.loot) {
             this.loot = [];
             for (const loot of data.loot) {
@@ -303,9 +303,9 @@ export class Obstacle extends GameObject {
         if (selectedItem.startsWith("tier_")) {
             this.getLoot(selectedItem);
         } else {
-            if (gunsThatCantSpawn.includes(selectedItem)){
-                ////
-            }else{
+            if (gunsThatCantSpawn.includes(selectedItem)) {
+                /// /
+            } else {
                 this.addLoot(selectedItem, lootTable[selectedItem].count);
             }
         }

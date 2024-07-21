@@ -81,8 +81,8 @@ class Game {
     ticksSinceLastGasDamage = 0;
     over = false; // Whether this game is over. This is set to true to stop the tick loop.
     started = false; // Whether there are more than 2 players, meaning the game has started.
-    lobbyStartTime; //time when a second player joins and the timer countdown starts, measured with Date.now()
-    timePeriodToAllowJoin; //After this time period has elapsed, players can no longer join the game.
+    lobbyStartTime; // time when a second player joins and the timer countdown starts, measured with Date.now()
+    timePeriodToAllowJoin; // After this time period has elapsed, players can no longer join the game.
     /**
      * Whether new players should be able to join
      * can also be an indication for the "BattleRoyale" gamemode whether or not the game as officially started
@@ -212,14 +212,14 @@ class Game {
         this.gas.posNew = new planck_1.Vec2(this.map.width / 2, this.map.height / 2);
         this.gas.currentPos = new planck_1.Vec2(this.map.width, this.map.height);
         this.gas.currentRad = this.map.width;
-        this.tick(30);
+        this.tick(1000 / 240);
     }
     tickTimes = [];
     tick(delay) {
         setTimeout(() => {
             const tickStart = Date.now();
             // Update physics
-            this.world.step(30);
+            this.world.step(12.5);
             // Create an alive count packet
             if (this.aliveCountDirty)
                 this.aliveCounts = new aliveCountsPacket_1.AliveCountsPacket(this);
@@ -277,7 +277,7 @@ class Game {
                     this.gas.currentRad = (0, math_1.lerp)(this.gas.duration, this.gas.radOld, this.gas.radNew);
                 }
             }
-            //stop players from joining game after timePeriodToAllowJoin has elapsed
+            // stop players from joining game after timePeriodToAllowJoin has elapsed
             if (Date.now() - this.lobbyStartTime >= this.timePeriodToAllowJoin && this.allowJoin) {
                 this.allowJoin = false;
             }
@@ -325,7 +325,7 @@ class Game {
                     p.updateHealthAndAdren();
                 }
                 else if (this.gamemode == constants_1.GameMode.BattleRoyale) {
-                    if (this.allowJoin == false) {
+                    if (!this.allowJoin) {
                         p.updateHealthAndAdren();
                     }
                 }
@@ -333,7 +333,7 @@ class Game {
                 if (gasDamage && this.isInRedZone(p.position)) {
                     p.damage(this.gas.damage, undefined, undefined, constants_1.DamageType.Gas);
                 }
-                //if player is being revived, cancel revive if either player move out of range
+                // if player is being revived, cancel revive if either player move out of range
                 if (p.playerBeingRevived) {
                     if ((0, math_1.distanceBetween)(p.position, p.playerBeingRevived.position) > constants_1.Constants.player.reviveRange) {
                         p.cancelAction();
@@ -368,7 +368,7 @@ class Game {
                         const weaponInfo = p.activeWeaponInfo;
                         // let difference = Math.min(p.inventory[weaponInfo.ammo], weaponInfo.maxClip - (p.activeWeapon as Gun).ammo);
                         let difference = Math.min(p.inventory[weaponInfo.ammo], p.activeWeapon.customClip - p.activeWeapon.ammo);
-                        //when mosin ammo reaches 0, do a full reload rather than incremental
+                        // when mosin ammo reaches 0, do a full reload rather than incremental
                         if (weaponInfo.name == "Mosin-Nagant" && difference == weaponInfo.maxReloadAlt) {
                             difference = weaponInfo.maxReloadAlt;
                         }
@@ -421,7 +421,7 @@ class Game {
                             p.ticksSinceCookStart = 0;
                         }
                         else {
-                            //we do not want the cooldown timer to start if throwing a nade
+                            // we do not want the cooldown timer to start if throwing a nade
                             p.activeWeapon.cooldown = Date.now();
                             if (p.activeWeapon.weaponType === constants_1.WeaponType.Melee) {
                                 p.useMelee();
@@ -658,7 +658,7 @@ class Game {
                 (0, misc_1.log)(`Average ms/tick: ${this.tickTimes.reduce((a, b) => a + b) / this.tickTimes.length}`);
                 this.tickTimes = [];
             }
-            const newDelay = Math.max(0, 30 - tickTime);
+            const newDelay = Math.max(0, (1000 / 240) - tickTime);
             this.tick(newDelay);
         }, delay);
     }
@@ -681,9 +681,9 @@ class Game {
          * max number of players allowed per team
          */
         const maxTeammates = 2;
-        //if numTeammates == maxTeammates, the team already has 4 people so the player can't join it
+        // if numTeammates == maxTeammates, the team already has 4 people so the player can't join it
         if (numTeammates == maxTeammates) {
-            groupId = data_1.TypeToId["outfitBase"];
+            groupId = data_1.TypeToId.outfitBase;
             loadout.outfit = "outfitBase";
         }
         let spawnPosition;
@@ -719,10 +719,10 @@ class Game {
             this.spectatablePlayers.push(p);
             p.fullDirtyObjects.add(p);
         }
-        //this is where you add loot you want to spawn on the player when they join the game
-        //do NOT do it inside the constructor
-        //spawn m870 next to player so they can choose between spas12 and m870
-        if (p.isSpectator == false) {
+        // this is where you add loot you want to spawn on the player when they join the game
+        // do NOT do it inside the constructor
+        // spawn m870 next to player so they can choose between spas12 and m870
+        if (!p.isSpectator) {
             new loot_1.Loot(this, "m870", p.position, 0, 1);
             new loot_1.Loot(this, "famas", p.position, 0, 1);
             new loot_1.Loot(this, "scar", p.position, 0, 1);
@@ -730,8 +730,12 @@ class Game {
             new loot_1.Loot(this, "deagle", p.position, 0, 1);
             new loot_1.Loot(this, "model94", p.position, 0, 1);
             new loot_1.Loot(this, "mk12", p.position, 0, 1);
-            new loot_1.Loot(this, "m249", p.position, 0, 1);
+            new loot_1.Loot(this, "m4a1", p.position, 0, 1);
+            new loot_1.Loot(this, "qbb97", p.position, 0, 1);
+            new loot_1.Loot(this, "m1a1", p.position, 0, 1);
             new loot_1.Loot(this, "mp220", p.position, 0, 1);
+            // new Loot(this, "usas", p.position, 0, 1);
+            // new Loot(this, "sv98", p.position, 0, 1);
             // new Loot(this, "mirv", p.position, 0, 1);
         }
         this.dynamicObjects.add(p);

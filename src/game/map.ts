@@ -34,7 +34,7 @@ type RectangleBound = ObjectBounds & { type: CollisionType.Rectangle };
 // type CircleBound = ObjectBounds & { type: CollisionType.Circle };
 
 // Potential naming collision with the native Map class
-//renamed from Map to GameMap to avoid collisions
+// renamed from Map to GameMap to avoid collisions
 export class GameMap {
     name: string;
     seed: number;
@@ -80,16 +80,12 @@ export class GameMap {
                 points.push(Vec2(x, y));
 
                 // Crossing bunker
-            
 
                 // River docks
-                
 
                 // Fisherman's shacks
-                
 
                 // Large bridges
-                
 
                 // Smaller river
                 if (x === 440) {
@@ -148,12 +144,12 @@ export class GameMap {
             this.genOnShore(ObjectKind.Building, "shack_03b", 1, 57, 1);
             this.genOnShore(ObjectKind.Building, "shack_03a", 1, 57, 1);
             // Conch bunker
-            
+
             // Huts
             this.genOnShore(ObjectKind.Building, "hut_01", 1, 27, 1);
             this.genOnShore(ObjectKind.Building, "hut_02", 1, 27, 1);
             this.genOnShore(ObjectKind.Building, "hut_03", 1, 27, 1);
- 
+
             // Barrels & crates
             // TODO Allow barrels and crates to spawn on the beach naturally
             this.genOnShore(ObjectKind.Obstacle, "crate_01", 3, 57, 4);
@@ -346,8 +342,8 @@ export class GameMap {
                     this.genBuilding(partType, part, partPosition, partOrientation, layer);
                     break;
                 case "obstacle":
-                    //ensures that mosin trees do not randomly spawn
-                    if (partType == "tree_03"){
+                    // ensures that mosin trees do not randomly spawn
+                    if (partType == "tree_03") {
                         break;
                     }
                     this.genObstacle(
@@ -551,18 +547,18 @@ export class GameMap {
     }
 
     getRandomPositionFor(
-            kind: ObjectKind,
-            object: JSONObjects.Obstacle | JSONObjects.Structure | JSONObjects.Building,
-            orientation: Orientation = 0,
-            scale = 1,
-            getPosition?: () => Vec2,
-            ignoreRivers?: boolean,
-            /**
+        kind: ObjectKind,
+        object: JSONObjects.Obstacle | JSONObjects.Structure | JSONObjects.Building,
+        orientation: Orientation = 0,
+        scale = 1,
+        getPosition?: () => Vec2,
+        ignoreRivers?: boolean,
+        /**
              * this is only passed in when getting a random spawn position for a player
              * it's used in battleroyale since teammates are supposed to spawn next to each other
              */
-            playerGroupId?: number,
-        ): Vec2 {
+        playerGroupId?: number
+    ): Vec2 {
         const isBuilding =
             kind === ObjectKind.Building || kind === ObjectKind.Structure;
         type Bound = ({
@@ -574,7 +570,7 @@ export class GameMap {
             rad: number
         }) & MinMax<Vec2>;
         const thisBounds: Bound[] = [];
-        
+
         switch (kind) {
             case ObjectKind.Obstacle:
             {
@@ -623,7 +619,7 @@ export class GameMap {
             };
         }
 
-        //REMOVE
+        // REMOVE
         let foundPosition = false;
         let thisPos: Vec2;
         let attempts = 0;

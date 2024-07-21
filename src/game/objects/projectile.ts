@@ -2,7 +2,7 @@ import { Constants, ObjectKind } from "../../utils/constants";
 import { Weapons } from "../../utils/data";
 import type { SurvivBitStream } from "../../utils/survivBitStream";
 import { GameObject } from "../gameObject";
-import { Vec2, type Body, Circle } from "planck";
+import { type Vec2, type Body, Circle } from "planck";
 import { type Game } from "../game";
 import { Explosion } from "../explosion";
 import { type Player } from "./player";
@@ -42,7 +42,7 @@ export class Projectile extends GameObject {
         layer: number,
         direction: Vec2,
         player: Player,
-        customVelocity: number = 1 //this is the number of ticks since grenade cook has started
+        customVelocity: number = 1 // this is the number of ticks since grenade cook has started
     ) {
         super(game, typeString, position, layer);
 
@@ -55,16 +55,16 @@ export class Projectile extends GameObject {
         const orientation = directionToOrientation(direction);
 
         let trueDistanceToMouse: number;
-        //if player is pointing up or down, only has half of distance to work with so needs to scale accordingly
-        if (orientation == 1 || orientation == 3){
-            trueDistanceToMouse = (player.distanceToMouse/player.zoom)*80;
-        }else{
-            trueDistanceToMouse = (player.distanceToMouse/player.zoom)*40;
+        // if player is pointing up or down, only has half of distance to work with so needs to scale accordingly
+        if (orientation == 1 || orientation == 3) {
+            trueDistanceToMouse = (player.distanceToMouse / player.zoom) * 80;
+        } else {
+            trueDistanceToMouse = (player.distanceToMouse / player.zoom) * 40;
         }
 
         // const trueDistanceToMouse = (player.distanceToMouse/player.zoom)*40;
-        const r = Math.pow(customVelocity, Math.pow(trueDistanceToMouse/30, 2));
-        const linearVelocity = lerpRangeRemap(r, 1, 120, 12, 40)+(player.speed*1000)/2;
+        const r = Math.pow(customVelocity, Math.pow(trueDistanceToMouse / 30, 2));
+        const linearVelocity = lerpRangeRemap(r, 1, 120, 12, 40) + (player.speed * 1000) / 2;
         const linearDamping = lerpRangeRemap(linearVelocity, 12, 40, 0.0004, 0.0011);
 
         // console.log({"linearVelocity": linearVelocity, "linearDamping": linearDamping});
@@ -73,12 +73,12 @@ export class Projectile extends GameObject {
             type: "dynamic",
             position,
             fixedRotation: true,
-            linearDamping: linearDamping,
+            linearDamping,
             // linearVelocity: this.direction.clone().mul((10)/1000)
             // linearVelocity: this.direction.clone().mul((100)/1000)
-            linearVelocity: this.direction.clone().mul((linearVelocity)/1000)
+            linearVelocity: this.direction.clone().mul((linearVelocity) / 1000)
         });
-        //this.data.throwPhysics.speed
+        // this.data.throwPhysics.speed
         this.body.createFixture({
             shape: Circle(0.5),
             restitution: 0.5,
@@ -99,14 +99,13 @@ export class Projectile extends GameObject {
             // this.game.dynamicObjects.delete(this);
             // this.game.deletedObjects.add(this);
             // this.game.world.destroyBody(this.body);
-        }, (this.data.fuseTime - customVelocity/30) * 1000);
+        }, (this.data.fuseTime - customVelocity / 30) * 1000);
         // }, this.data.fuseTime * 1000);
     }
 
     update(): void {
-
         // console.log(this.layer);
-        
+
         let onStair = false;
         const originalLayer = this.layer;
         for (const stair of this.game.stairs) {

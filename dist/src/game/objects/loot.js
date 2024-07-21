@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.splitUpLoot = exports.generateLooseLootFromArray = exports.Loot = void 0;
+exports.Loot = void 0;
+exports.generateLooseLootFromArray = generateLooseLootFromArray;
+exports.splitUpLoot = splitUpLoot;
 const constants_1 = require("../../utils/constants");
 const misc_1 = require("../../utils/misc");
 const data_1 = require("../../utils/data");
@@ -34,7 +36,7 @@ class Loot extends gameObject_1.GameObject {
             typeString = "9mm";
             count = 60;
         }
-        //8xs and 15xs are unfair so theyre not allowed to spawn
+        // 8xs and 15xs are unfair so theyre not allowed to spawn
         super(game, typeString, position || (0, planck_1.Vec2)(0, 0), layer); // Ensure a default position if not provided
         if (typeString == "8xscope" || typeString == "15xscope") {
             return;
@@ -342,7 +344,7 @@ function generateLooseLootFromArray(game, loot, position, layer) {
                 items.push(item);
                 weights.push(lootTable[item].weight);
             }
-            let selectedItem = (0, math_1.weightedRandom)(items, weights);
+            const selectedItem = (0, math_1.weightedRandom)(items, weights);
             if (selectedItem === "nothing")
                 continue;
             if (selectedItem.startsWith("tier_")) {
@@ -369,7 +371,6 @@ function generateLooseLootFromArray(game, loot, position, layer) {
         }
     }
 }
-exports.generateLooseLootFromArray = generateLooseLootFromArray;
 function splitUpLoot(player, item, amount) {
     const dropCount = Math.floor(amount / 60);
     for (let i = 0; i < dropCount; i++) {
@@ -380,5 +381,4 @@ function splitUpLoot(player, item, amount) {
     if (amount % 60 !== 0)
         new Loot(player.game, item, player.position, player.layer, amount % 60);
 }
-exports.splitUpLoot = splitUpLoot;
 //# sourceMappingURL=loot.js.map

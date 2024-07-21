@@ -40,11 +40,11 @@ const constants_1 = require("./utils/constants");
 const data_1 = require("./utils/data");
 const survivBitStream_1 = require("./utils/survivBitStream");
 const fs = __importStar(require("fs"));
-let playerIPs = {};
+const playerIPs = {};
 // Initialize the game.
 // let game = new Game(GameMode[Config.gamemode]);
-//let game = new Game(GameMode["DeathMatch"]);
-let game = new game_1.Game(constants_1.GameMode["BattleRoyale"]);
+// let game = new Game(GameMode["DeathMatch"]);
+let game = new game_1.Game(constants_1.GameMode.BattleRoyale);
 exports.game = game;
 // Initialize the server.
 const app = data_1.Config.webSocketHttps
@@ -75,12 +75,14 @@ app.ws("/play", {
         res.onAborted(() => { });
         // Start a new game if the old one is over.
         if (game.over)
-            exports.game = game = new game_1.Game(constants_1.GameMode["DeathMatch"]);
+            exports.game = game = new game_1.Game(constants_1.GameMode.DeathMatch);
         if (data_1.Config.botProtection) {
             const ip = req.getHeader("cf-connecting-ip");
             if (ip !== undefined && ip.length > 0) {
-                if (!bannedIPs1.includes(ip))
-                    return res.endWithoutBody(0, true);
+                if (!bannedIPs1.includes(ip)) {
+                    res.endWithoutBody(0, true);
+                    return;
+                }
                 const playerIPCount = playerCounts.get(ip);
                 const recentIPCount = connectionAttempts.get(ip);
                 if (playerIPCount !== undefined && recentIPCount !== undefined) {
@@ -88,7 +90,8 @@ app.ws("/play", {
                         if (!bannedIPs1.includes(ip))
                             bannedIPs1.push(ip);
                         (0, misc_1.log)(`[IP BLOCK]: ${ip}`);
-                        return res.endWithoutBody(0, true);
+                        res.endWithoutBody(0, true);
+                        return;
                     }
                 }
                 playerCounts.set(ip, (playerIPCount ?? 0) + 1);
@@ -112,14 +115,14 @@ app.ws("/play", {
      * @param socket The socket being opened.
      */
     open: (socket) => {
-        const http = require('http');
+        const http = require("http");
         const ip = new TextDecoder().decode(socket.getRemoteAddressAsText());
         socket.ip = ip;
         let playerName = socket.cookies["player-name"]?.trim().substring(0, 16) ?? "Player";
         if (typeof playerName !== "string" || playerName.length < 1)
             playerName = "Player";
         const bannedIPs = readJSON("data/bannedIPs.json") || [];
-        let PlayerInfo = readJSON("data/playerInfo.json");
+        const PlayerInfo = readJSON("data/playerInfo.json");
         if (!PlayerInfo[ip]) {
             PlayerInfo[ip] = [playerName];
         }
@@ -131,7 +134,7 @@ app.ws("/play", {
         fs.writeFileSync("data/playerInfo.json", JSON.stringify(PlayerInfo, null, 3));
         function readJSON(filename) {
             try {
-                const data = fs.readFileSync(filename, 'utf-8');
+                const data = fs.readFileSync(filename, "utf-8");
                 return JSON.parse(data);
             }
             catch (error) {
@@ -145,9 +148,9 @@ app.ws("/play", {
             playerInfo = {};
         }
         (0, misc_1.log)(`"${playerName}" joined the game. ${ip}`);
-        const axios = require('axios');
+        const axios = require("axios");
         const message = `${playerName} joined the game. ${ip}`;
-        const webhookURL = 'https://discord.com/api/webhooks/1229212816829841550/6P1ULejYRWetY2ZSI0zR2ZVLr02-mganIBJZKA2dLpVBPB01pY6B4KovObfXlAz6rfsP';
+        const webhookURL = "https://discord.com/api/webhooks/1229212816829841550/6P1ULejYRWetY2ZSI0zR2ZVLr02-mganIBJZKA2dLpVBPB01pY6B4KovObfXlAz6rfsP";
         axios.post(webhookURL, {
             content: message
         })
@@ -167,7 +170,7 @@ app.ws("/play", {
             if (p.socket.ip === ip) {
                 count++;
             }
-            if (count === 4) {
+            if (count >= 4) {
                 socket.close();
                 console.log("bot attempt detected");
                 return;
@@ -182,9 +185,8 @@ app.ws("/play", {
         if (bannedIPs.includes(ip)) {
             (0, misc_1.log)(`Connection from ${ip} rejected due to IP ban.`);
             socket.close();
-            return;
         }
-    },
+    }, //
     /**
      * Handle messages coming from the socket.
      * @param socket The socket in question.
@@ -221,8 +223,9 @@ app.ws("/play", {
      * @param socket The socket being closed.
      */
     close: (socket) => {
-        if (socket.player == undefined)
+        if (socket.player == undefined) {
             return;
+        }
         if (data_1.Config.botProtection)
             playerCounts.set(socket.ip, (playerCounts.get(socket.ip) ?? 0) - 1);
         (0, misc_1.log)(`"${socket.player.name}" left the game.`);

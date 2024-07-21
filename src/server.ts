@@ -1,10 +1,10 @@
 import { version } from "../package.json";
 
 import {
-    App, 
+    App,
     SSLApp
 } from "uWebSockets.js";
-import cookie from "cookie"; 
+import cookie from "cookie";
 
 import { type ChildProcessWithoutNullStreams, spawn } from "child_process";
 import * as path from "path";
@@ -18,7 +18,7 @@ const app = Config.webSocketHttps
     ? SSLApp({
         key_file_name: Config.keyFile,
         cert_file_name: Config.certFile
-    }) 
+    })
     : App();
 
 const staticFiles: Record<string, Buffer> = {};

@@ -7,9 +7,9 @@ export class MapPacket extends SendingPacket {
     constructor(p: Player) {
         super(p);
         this.msgType = MsgType.Map;
-        this.allocBytes = 16384; 
+        this.allocBytes = 16384;
     }
- 
+
     serialize(stream: SurvivBitStream): void {
         super.serialize(stream);
 

@@ -7,7 +7,7 @@ const math_1 = require("../../utils/math");
 const data_1 = require("../../utils/data");
 const planck_1 = require("planck");
 const loot_1 = require("../../game/objects/loot");
-let i = 0;
+const i = 0;
 class InputPacket extends receivingPacket_1.ReceivingPacket {
     deserialize(stream) {
         const p = this.p;
@@ -52,7 +52,7 @@ class InputPacket extends receivingPacket_1.ReceivingPacket {
             const input = stream.readUint8();
             switch (input) { // TODO Remove redundant code
                 case constants_1.InputType.Interact: {
-                    //if theres no revive keybind set default to interact keybind
+                    // if theres no revive keybind set default to interact keybind
                     p.revive();
                     let minDistInteractable = Number.MAX_VALUE;
                     let minDist = Number.MAX_VALUE;

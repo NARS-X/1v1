@@ -22,11 +22,11 @@ class Projectile extends gameObject_1.GameObject {
     collidesWith = {
         player: false,
         obstacle: true,
-        bullet: false,
+        bullet: true,
         loot: false,
         projectile: false
     };
-    constructor(typeString, game, position, layer, direction, player, customVelocity = 1 //this is the number of ticks since grenade cook has started
+    constructor(typeString, game, position, layer, direction, player, customVelocity = 1 // this is the number of ticks since grenade cook has started
     ) {
         super(game, typeString, position, layer);
         this.direction = direction;
@@ -34,7 +34,7 @@ class Projectile extends gameObject_1.GameObject {
         this.data = data_1.Weapons[this.typeString];
         const orientation = (0, math_1.directionToOrientation)(direction);
         let trueDistanceToMouse;
-        //if player is pointing up or down, only has half of distance to work with so needs to scale accordingly
+        // if player is pointing up or down, only has half of distance to work with so needs to scale accordingly
         if (orientation == 1 || orientation == 3) {
             trueDistanceToMouse = (player.distanceToMouse / player.zoom) * 80;
         }
@@ -50,12 +50,12 @@ class Projectile extends gameObject_1.GameObject {
             type: "dynamic",
             position,
             fixedRotation: true,
-            linearDamping: linearDamping,
+            linearDamping,
             // linearVelocity: this.direction.clone().mul((10)/1000)
             // linearVelocity: this.direction.clone().mul((100)/1000)
             linearVelocity: this.direction.clone().mul((linearVelocity) / 1000)
         });
-        //this.data.throwPhysics.speed
+        // this.data.throwPhysics.speed
         this.body.createFixture({
             shape: (0, planck_1.Circle)(0.5),
             restitution: 0.5,
@@ -65,6 +65,16 @@ class Projectile extends gameObject_1.GameObject {
         });
         setTimeout(() => {
             this.explode();
+            // this.player.body.setPosition(this.position.clone());
+            // this.player.layer = this.layer;
+            // for (let i = 0; i < 10; i++){
+            //     new Loot(this.game, "flare", this.position, this.layer, 1);
+            // }
+            // this.player.fullDirtyObjects.add(this.player);
+            // this.game.projectiles.delete(this);
+            // this.game.dynamicObjects.delete(this);
+            // this.game.deletedObjects.add(this);
+            // this.game.world.destroyBody(this.body);
         }, (this.data.fuseTime - customVelocity / 30) * 1000);
         // }, this.data.fuseTime * 1000);
     }

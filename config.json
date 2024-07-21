@@ -1,16 +1,14 @@
 {
-  "host": "127.0.0.1",
+  "host": "0.0.0.0",
   "port": 4000,
   "https": false,
-  "webSocketHost": "127.0.0.1",
-  "webSocketPort": 4001,
+  "webSocketHost": "0.0.0.0",
+  "webSocketPort": 50040,
   "webSocketHttps": false,
-  "webSocketDevAddress": "127.0.0.1:4001",
-  "useWebSocketDevAddress": true,
+  "webSocketDevAddress": "127.0.0.1:50040",
+  "useWebSocketDevAddress": false,
   "webSocketRegions": {
-    "na": "na.resurviv.io",
-    "eu": "eu.resurviv.io",
-    "as": "as.resurviv.io"
+    "na": "1v1.donetsk.live"
   },
   "defaultRegion": "na",
   "keyFile": "key.pem",

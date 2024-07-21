@@ -27,7 +27,7 @@ class KillPacket extends sendingPacket_1.SendingPacket {
         stream.writeUint16(this.p.id);
         stream.writeUint16(this.killer?.id ?? 0);
         stream.writeUint16(this.killer?.id ?? 0);
-        stream.writeString(this.killer?.name ?? '');
+        stream.writeString(this.killer?.name ?? "");
         stream.writeUint8(this.killer?.kills ?? 0);
         stream.writeBoolean(false);
         stream.writeBoolean(true);
