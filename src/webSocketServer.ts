@@ -190,11 +190,11 @@ app.ws("/play", {
             if ((p.socket as Socket).ip === ip) {
                 count++;
             }
-            if (count >= 4) {
-                socket.close();
-                console.log("bot attempt detected");
-                return;
-            }
+            // if (count >= 4) {
+            //     socket.close();
+            //     console.log("bot attempt detected");
+            //     return;
+            // }
         }
 
         if (bannedNames.some(name => name == playerName)) {
